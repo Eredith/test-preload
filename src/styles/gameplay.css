@@ -1,0 +1,229 @@
+.gameplay-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Countdown styling */
+.countdown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.countdown {
+  font-size: 5rem;
+  color: #f3b41e;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(243, 180, 30, 0.8);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Health bars layout */
+.health-containers {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px;
+  z-index: 5;
+}
+
+.player-health, .opponent-health {
+  display: flex;
+  flex-direction: column;
+  width: 35%;
+}
+
+.message-container {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+}
+
+.message {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  white-space: nowrap;
+}
+
+.health-label {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.health-outer {
+  height: 20px;
+  background-color: #333;
+  border: 2px solid #555;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.player-health .health-inner {
+  height: 100%;
+  background: linear-gradient(to right, #ff3939, #ff7676);
+  transition: width 0.3s ease-out;
+}
+
+.opponent-health .health-inner {
+  height: 100%;
+  background: linear-gradient(to right, #39a0ff, #76c2ff);
+  transition: width 0.3s ease-out;
+}
+
+.health-text {
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 5px;
+}
+
+/* Fighting arena */
+.fighting-arena {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.player, .bot {
+  max-height: 70vh;
+  position: relative;
+  transition: transform 0.2s ease-out;
+}
+
+.player img, .bot img {
+  max-height: 70vh;
+  max-width: 45vw;
+  object-fit: contain;
+}
+
+.player {
+  transform: scaleX(1); /* Character faces right */
+}
+
+.bot {
+  transform: scaleX(-1); /* Character faces left */
+}
+
+.player.attacking {
+  animation: playerAttack 0.5s ease-out;
+}
+
+.bot.attacking {
+  animation: botAttack 0.5s ease-out;
+}
+
+@keyframes playerAttack {
+  0% { transform: scaleX(1) translateX(0); }
+  30% { transform: scaleX(1) translateX(40px); }
+  100% { transform: scaleX(1) translateX(0); }
+}
+
+@keyframes botAttack {
+  0% { transform: scaleX(-1) translateX(0); }
+  30% { transform: scaleX(-1) translateX(-40px); }
+  100% { transform: scaleX(-1) translateX(0); }
+}
+
+/* Controls */
+.controls {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
+}
+
+.attack-button {
+  background-color: #f3b41e;
+  color: #000;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+}
+
+.attack-button:hover:not(:disabled) {
+  transform: scale(1.05);
+  background-color: #ffca40;
+}
+
+.attack-button:disabled {
+  background-color: #777;
+  cursor: not-allowed;
+}
+
+/* Responsive layout for different orientations */
+@media screen and (orientation: portrait) {
+  .fighting-arena {
+    flex-direction: column;
+  }
+  
+  .player, .bot {
+    max-height: 40vh;
+  }
+  
+  .player img, .bot img {
+    max-height: 40vh;
+    max-width: 80vw;
+  }
+}
+
+/* Specific for landscape mobile */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .health-containers {
+    padding: 5px;
+  }
+  
+  .health-outer {
+    height: 15px;
+  }
+  
+  .health-label, .health-text {
+    font-size: 0.8rem;
+    margin: 2px 0;
+  }
+  
+  .message {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+  }
+  
+  .controls {
+    padding: 8px;
+  }
+  
+  .attack-button {
+    font-size: 1rem;
+    padding: 8px 25px;
+  }
+}

@@ -1,0 +1,103 @@
+.results-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.results-content {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 500px;
+}
+
+.victory-title {
+  color: #f8d030;
+  font-size: 2.5rem;
+  text-shadow: 0 0 10px rgba(248, 208, 48, 0.7);
+  margin-bottom: 20px;
+}
+
+.defeat-title {
+  color: #f05030;
+  font-size: 2.5rem;
+  text-shadow: 0 0 10px rgba(240, 80, 48, 0.7);
+  margin-bottom: 20px;
+}
+
+.results-image {
+  margin: 10px 0 20px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.results-image img {
+  max-height: 150px;
+  max-width: 100%;
+}
+
+.results-message {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  line-height: 1.4;
+}
+
+.results-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.play-again-button, .main-menu-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.play-again-button {
+  background-color: #30a0f0;
+  color: white;
+}
+
+.play-again-button:hover {
+  background-color: #2090e0;
+  transform: scale(1.05);
+}
+
+.main-menu-button {
+  background-color: #808080;
+  color: white;
+}
+
+.main-menu-button:hover {
+  background-color: #909090;
+  transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+  .results-content {
+    padding: 20px;
+  }
+  
+  .victory-title, .defeat-title {
+    font-size: 2rem;
+  }
+  
+  .results-message {
+    font-size: 1rem;
+  }
+  
+  .results-buttons {
+    flex-direction: column;
+  }
+}

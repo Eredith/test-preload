@@ -4,9 +4,14 @@
 
 body {
   margin: 0;
-  background-color: #121212;
-  color: white;
   font-family: 'Arial', sans-serif;
+  background-color: #111; /* Fallback color */
+  background-image: url("/assets/main-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 #root {
