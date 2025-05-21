@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react'
-import './App.css'
+import "./app.css"
+import "./index.css"
+import "./styles/Gameplay.css"
+import "./styles/ResultsScreen.css"
+import "./styles/RotationOverlay.css"
 import MainMenu from './components/MainMenu'
 import CharacterSelect from './components/CharacterSelect'
 import GameplayScene from './components/GameplayScene'
 import ResultsScreen from './components/ResultsScreen'
+import RotationOverlay from './components/RotationOverlay' // Import the RotationOverlay component
 
 function App() {
   const [currentScene, setCurrentScene] = useState('menu')
@@ -70,6 +75,7 @@ function App() {
   return (
     <div className="fighting-game">
       {renderScene()}
+      <RotationOverlay /> {/* Add the RotationOverlay component here */}
     </div>
   )
 }

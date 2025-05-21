@@ -1,0 +1,89 @@
+.rotation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.rotation-content {
+  padding: 2rem;
+  max-width: 90%;
+}
+
+.rotation-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #f3b41e;
+}
+
+.rotation-content p {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Phone rotation animation */
+.phone-icon {
+  margin: 0 auto 2rem;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  animation: rotate 3s infinite ease-in-out;
+}
+
+.phone-outline {
+  width: 60px;
+  height: 100px;
+  border: 4px solid white;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.phone-screen {
+  width: 48px;
+  height: 80px;
+  background-color: #333;
+  border-radius: 4px;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(90deg);
+  }
+  70% {
+    transform: rotate(90deg);
+  }
+  80% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Media query to hide the overlay in landscape mode */
+@media (orientation: landscape) {
+  .rotation-overlay {
+    display: none;
+  }
+}
