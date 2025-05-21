@@ -4,6 +4,7 @@ import "./index.css"
 import "./styles/gameplay.css"
 import "./styles/resultsscreen.css"
 import "./styles/rotationoverlay.css"
+import Preloader from './components/Preload';
 import MainMenu from './components/MainMenu'
 import CharacterSelect from './components/CharacterSelect'
 import GameplayScene from './components/GameplayScene'
@@ -11,9 +12,30 @@ import ResultsScreen from './components/ResultsScreen'
 import RotationOverlay from './components/RotationOverlay' // Import the RotationOverlay component
 
 function App() {
+    const [isLoaded, setIsLoaded] = useState(false);
+
   const [currentScene, setCurrentScene] = useState('menu')
   const [playerCharacter, setPlayerCharacter] = useState(null)
   const [gameResult, setGameResult] = useState(null)
+
+const handleLoadComplete = () => {
+    setIsLoaded(true);
+  };
+
+  const handleCharacterSelect = (character) => {
+    setSelectedCharacter(character);
+    setGameState('gameplay');
+  };
+
+  const handleGameOver = (result) => {
+    setGameResult(result);
+    setGameState('results');
+  };
+
+  const handlePlayAgain = () => {
+    setGameState('start');
+    setSelectedCharacter(null);
+  };
 
   // Fullscreen handler (one-time)
   useEffect(() => {
@@ -59,7 +81,10 @@ function App() {
   }
 
   // Scene renderer
-  const renderScene = () => {
+  const renderGameContent = () => {
+    if (!isLoaded) {
+      return <Preloader onLoadComplete={handleLoadComplete} />;
+    }
     switch (currentScene) {
       case 'menu':
         return <MainMenu onStartClick={startGame} />
@@ -74,7 +99,7 @@ function App() {
 
   return (
     <div className="fighting-game">
-      {renderScene()}
+      {renderGameContent()}
       <RotationOverlay /> {/* Add the RotationOverlay component here */}
     </div>
   )
