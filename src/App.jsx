@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import "./app.css"
+import "./App.css"
 import "./index.css"
 import "./styles/gameplay.css"
 import "./styles/resultsscreen.css"
