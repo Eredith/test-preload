@@ -193,15 +193,14 @@ function GameplayScene({ character, onGameOver }) {
   return (
     <div className="gameplay-container">
       {/* Arcade cabinet frame */}
-      <div className="arcade-frame">
-        <div className="arcade-screen">
-          {/* Countdown overlay */}
+      {/* Countdown overlay */}
           {countdown !== null && (
             <div className="countdown-overlay">
               <div className="countdown">{countdown === 0 ? "FIGHT!" : countdown}</div>
             </div>
           )}
-
+      <div className="arcade-frame">
+        <div className="arcade-screen">
           {/* Game over overlay */}
           {gameOver && (
             <div className="game-over-overlay">
@@ -278,12 +277,12 @@ function GameplayScene({ character, onGameOver }) {
               </div>
             )}
 
+            {/* Player character */}
             <div className={`player ${isPlayerAttacking ? `attacking-${attackType || "punch"}` : ""}`}>
-              <img src={character?.image || "/assets/karate punch.png"} alt="Player" />
+              <img src="/assets/lifong.png" alt="Player" />
             </div>
-
             <div className={`bot ${isBotAttacking ? "attacking" : ""}`}>
-              <img src="/assets/karate punch1.png" alt="Opponent" />
+              <img src={character?.image || "/assets/karate punch.png"} alt="Opponent" />
             </div>
           </div>
 
