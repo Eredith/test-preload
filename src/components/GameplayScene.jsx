@@ -279,11 +279,10 @@ function GameplayScene({ character, onGameOver }) {
             )}
 
             <div className={`player ${isPlayerAttacking ? `attacking-${attackType || "punch"}` : ""}`}>
-              <img src={character?.image || "/assets/karate punch.png"} alt="Player" />
+              <img src="/assets/lifong.png" alt="Player" />
             </div>
-
             <div className={`bot ${isBotAttacking ? "attacking" : ""}`}>
-              <img src="/assets/karate punch1.png" alt="Opponent" />
+              <img src={character?.image || "/assets/karate punch.png"} alt="Opponent" />
             </div>
           </div>
 
@@ -307,13 +306,6 @@ function GameplayScene({ character, onGameOver }) {
               disabled={gameOver || !isMatchStarted}
             >
               KICK
-            </button>
-            <button
-              className="attack-button special-button"
-              onClick={() => playerAttack("special")}
-              disabled={gameOver || !isMatchStarted || comboCount < 2}
-            >
-              SPECIAL
             </button>
           </div>
         </div>

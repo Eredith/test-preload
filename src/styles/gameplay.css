@@ -35,19 +35,19 @@
   100% { transform: scale(1); }
 }
 
-/* Health bars layout */
+/* Health bars layout - Modified to match image */
 .health-containers {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
   padding: 10px;
   z-index: 5;
+  gap: 10px;
 }
 
-.player-health, .opponent-health {
+.player-health-container, .opponent-health-container {
   display: flex;
   flex-direction: column;
-  width: 35%;
+  width: 100%;
 }
 
 .message-container {
@@ -73,6 +73,7 @@
   color: white;
   font-weight: bold;
   margin-bottom: 5px;
+  text-align: left;
 }
 
 .health-outer {
@@ -98,37 +99,41 @@
 .health-text {
   color: white;
   font-weight: bold;
-  text-align: center;
+  text-align: left;
   margin-top: 5px;
 }
 
-/* Fighting arena */
+/* Fighting arena - Modified for vertical layout */
 .fighting-arena {
   flex: 1;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: 20px;
+  gap: 20px;
 }
 
 .player, .bot {
-  max-height: 70vh;
+  max-height: 30vh;
   position: relative;
   transition: transform 0.2s ease-out;
 }
 
 .player img, .bot img {
-  max-height: 70vh;
-  max-width: 45vw;
+  max-height: 30vh;
+  max-width: 80vw;
   object-fit: contain;
 }
 
 .player {
   transform: scaleX(1); /* Character faces right */
+  order: 1; /* Player on top in the vertical layout */
 }
 
 .bot {
   transform: scaleX(-1); /* Character faces left */
+  order: 2; /* Opponent below player in vertical layout */
 }
 
 .player.attacking {
@@ -140,22 +145,24 @@
 }
 
 @keyframes playerAttack {
-  0% { transform: scaleX(1) translateX(0); }
-  30% { transform: scaleX(1) translateX(40px); }
-  100% { transform: scaleX(1) translateX(0); }
+  0% { transform: scaleX(1) translateY(0); }
+  30% { transform: scaleX(1) translateY(-20px); }
+  100% { transform: scaleX(1) translateY(0); }
 }
 
 @keyframes botAttack {
-  0% { transform: scaleX(-1) translateX(0); }
-  30% { transform: scaleX(-1) translateX(-40px); }
-  100% { transform: scaleX(-1) translateX(0); }
+  0% { transform: scaleX(-1) translateY(0); }
+  30% { transform: scaleX(-1) translateY(20px); }
+  100% { transform: scaleX(-1) translateY(0); }
 }
 
-/* Controls */
+/* Controls - Modified to match image */
 .controls {
   padding: 15px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
   z-index: 5;
 }
 
@@ -164,12 +171,14 @@
   color: #000;
   font-weight: bold;
   font-size: 1.2rem;
-  padding: 10px 30px;
+  padding: 12px 40px;
   border: none;
   border-radius: 50px;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.2s;
+  width: 80%;
+  max-width: 300px;
 }
 
 .attack-button:hover:not(:disabled) {
@@ -182,23 +191,52 @@
   cursor: not-allowed;
 }
 
-/* Responsive layout for different orientations */
-@media screen and (orientation: portrait) {
+/* Ticket booking section - Added to match image */
+.ticket-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ticket-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media screen and (orientation: landscape) {
+  /* For landscape mobile, we might want to adjust some spacing */
   .fighting-arena {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 10px;
   }
   
   .player, .bot {
-    max-height: 40vh;
+    max-height: 50vh;
   }
   
-  .player img, .bot img {
-    max-height: 40vh;
-    max-width: 80vw;
+  .health-containers {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .player-health-container, .opponent-health-container {
+    width: 45%;
+  }
+  
+  .attack-button {
+    width: auto;
+    padding: 10px 30px;
   }
 }
 
-/* Specific for landscape mobile */
 @media screen and (orientation: landscape) and (max-height: 500px) {
   .health-containers {
     padding: 5px;
@@ -225,5 +263,9 @@
   .attack-button {
     font-size: 1rem;
     padding: 8px 25px;
+  }
+  
+  .player, .bot {
+    max-height: 40vh;
   }
 }
