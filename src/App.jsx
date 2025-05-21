@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState} from 'react'
 import './App.css'
 
 // Scene components (you'll create these)
@@ -135,7 +135,7 @@ function App() {
       case 'gameplay':
         return <GameplayScene character={playerCharacter} onGameOver={endGame} />
       case 'results':
-        return <ResultsScreen result={gameResult} onPlayAgain={goToCharacterSelect} onMainMenu={goToMainMenu} />
+        return <ResultsScreen result={gameResult} onPlayAgain={goToMainMenu} onMainMenu={goToMainMenu} />
       default:
         return <MainMenu onStartClick={goToCharacterSelect} />
     }

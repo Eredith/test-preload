@@ -5,16 +5,27 @@ function CharacterSelect({ onCharacterSelect }) {
     {
       id: 'daniel',
       name: 'Daniel',
-      image: '/assets/daniel.png'
+      image: '/assets/daniel.png',
+      portrait: '/assets/Daniel Style_1/Daniel_MiyagiStyle_01c_00000.png',
+      mirrorPortrait: true,
+      attackFrames: Array.from({ length: 79 }, (_, i) =>
+        `/assets/Daniel Style_1/Daniel_MiyagiStyle_01c_${String(i).padStart(5, "0")}.png`
+      ),
+      idleImg: '/assets/Daniel Style_1/Daniel_MiyagiStyle_01c_00028.png',
     },
     {
       id: 'mrhan',
       name: 'Mr. Han',
-      image: '/assets/mrhan.png'
+      image: '/assets/mrhan.png',
+      portrait: '/assets/Jakie_KungFu_Style_3/Jakie_KungFuStyle_03_00055.png',
+      mirrorPortrait: true,
+      attackFrames: Array.from({ length: 58 }, (_, i) =>
+        `/assets/Jakie_KungFu_Style_3/Jakie_KungFuStyle_03_${String(i).padStart(5, "0")}.png`
+      ),
+      idleImg: '/assets/Jakie_KungFu_Style_3/Jakie_KungFuStyle_03_00000.png',
     }
   ];
 
-  // When character is clicked, immediately call onCharacterSelect
   const handleSelect = (character) => {
     onCharacterSelect(character);
   };

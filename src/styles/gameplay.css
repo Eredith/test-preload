@@ -8,6 +8,10 @@
   overflow: hidden;
 }
 
+.mirrored-image {
+  transform: scaleX(-1);
+}
+
 /* Arcade cabinet styling */
 .arcade-frame {
   width: 95vw;
@@ -57,7 +61,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
   z-index: 10;
 }
 

@@ -1,213 +1,233 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import "../styles/Gameplay.css"
+import { useState, useEffect, useRef, useMemo } from "react";
+import "../styles/Gameplay.css";
 
-function GameplayScene({ character, onGameOver }) {
-  const [playerHealth, setPlayerHealth] = useState(100)
-  const [botHealth, setBotHealth] = useState(100)
-  const [message, setMessage] = useState("Fight!")
-  const [isPlayerAttacking, setIsPlayerAttacking] = useState(false)
-  const [isBotAttacking, setIsBotAttacking] = useState(false)
-  const [gameOver, setGameOver] = useState(false)
-  const [countdown, setCountdown] = useState(3)
-  const [isMatchStarted, setIsMatchStarted] = useState(false)
-  const [currentRound, setCurrentRound] = useState(1)
-  const [playerWins, setPlayerWins] = useState(0)
-  const [botWins, setBotWins] = useState(0)
-  const [matchTimer, setMatchTimer] = useState(60)
-  const [attackType, setAttackType] = useState(null)
-  const [showHitEffect, setShowHitEffect] = useState(false)
-  const [hitPosition, setHitPosition] = useState({ x: 0, y: 0 })
-  const [comboCount, setComboCount] = useState(0)
+export default function GameplayScene({ character, onGameOver }) {
+  const FRAME_DURATION = 30;
+  const BOT_ATTACK_RATE = 3000;
+  const PLAYER_FRAMES = 36;
+  const BOT_FRAMES = 80;
+
+  const PLAYER_ATTACK = useMemo(
+    () =>
+      Array.from(
+        { length: PLAYER_FRAMES },
+        (_, i) =>
+          `/assets/Li_FongStyle_01/Li_FongStyle_01_${String(i).padStart(
+            5,
+            "0"
+          )}.png`
+      ),
+    []
+  );
+  const PLAYER_IDLE = "/assets/Li_FongStyle_01/Li_FongStyle_01_00000.png";
+
+  const BOT_ATTACK = useMemo(
+    () =>
+      character?.attackFrames ??
+      Array.from(
+        { length: BOT_FRAMES },
+        (_, i) =>
+          `/assets/Default_KungFu_Style/Default_KungFuStyle_${String(
+            i
+          ).padStart(5, "0")}.png`
+      ),
+    [character]
+  );
+  const BOT_IDLE =
+    character?.idleImg ??
+    "/assets/Default_KungFu_Style/Default_KungFuStyle_00000.png";
+
+  const [playerHP, setPlayerHP] = useState(100);
+  const [botHP, setBotHP] = useState(100);
+  const [message, setMessage] = useState("Fight!");
+  const [round, setRound] = useState(1);
+  const [playerWins, setPlayerWins] = useState(0);
+  const [botWins, setBotWins] = useState(0);
+  const [matchTimer, setMatchTimer] = useState(60);
+  const [countdown, setCountdown] = useState(3);
+  const [isMatchStarted, setIsMatchStarted] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [playerMode, setPlayerMode] = useState("idle");
+  const [botMode, setBotMode] = useState("idle");
+  const [playerFrame, setPlayerFrame] = useState(0);
+  const [botFrame, setBotFrame] = useState(0);
+  const [combo, setCombo] = useState(0);
+  const [showHit, setShowHit] = useState(false);
+  const [hitPos, setHitPos] = useState({ x: 50, y: 40 });
+
+  const rafId = useRef(null);
+  const comboTimer = useRef(null);
 
   useEffect(() => {
+    let lastTime = 0;
+    let playerTimeAccumulator = 0;
+    let botTimeAccumulator = 0;
+
+    const loop = (timestamp) => {
+      if (lastTime === 0) {
+        lastTime = timestamp;
+      }
+      const deltaTime = timestamp - lastTime;
+      lastTime = timestamp;
+
+      // Player animation
+      if (playerMode === "attack") {
+        playerTimeAccumulator += deltaTime;
+        if (playerTimeAccumulator >= FRAME_DURATION) {
+          const framesToAdvance = Math.floor(
+            playerTimeAccumulator / FRAME_DURATION
+          );
+          setPlayerFrame(
+            (prevFrame) => (prevFrame + framesToAdvance) % PLAYER_FRAMES
+          );
+          playerTimeAccumulator = playerTimeAccumulator % FRAME_DURATION;
+        }
+      } else {
+        setPlayerFrame(0);
+        playerTimeAccumulator = 0;
+      }
+
+      // Bot animation
+      if (botMode === "attack") {
+        botTimeAccumulator += deltaTime;
+        if (botTimeAccumulator >= FRAME_DURATION) {
+          const framesToAdvance = Math.floor(
+            botTimeAccumulator / FRAME_DURATION
+          );
+          setBotFrame(
+            (prevFrame) => (prevFrame + framesToAdvance) % BOT_FRAMES
+          );
+          botTimeAccumulator = botTimeAccumulator % FRAME_DURATION;
+        }
+      } else {
+        setBotFrame(0);
+        botTimeAccumulator = 0;
+      }
+
+      rafId.current = requestAnimationFrame(loop);
+    };
+
+    rafId.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafId.current);
+  }, [playerMode, botMode, PLAYER_FRAMES, BOT_FRAMES, FRAME_DURATION]);
+
+  useEffect(() => {
+    if (countdown === null) return;
     if (countdown > 0) {
-      const timer = setTimeout(() => {
-        setCountdown(countdown - 1)
-      }, 1000)
-      return () => clearTimeout(timer)
-    } else if (countdown === 0) {
-      setMessage("FIGHT!")
-      setIsMatchStarted(true)
-      // Clear countdown after a delay
-      setTimeout(() => {
-        setCountdown(null)
-      }, 1000)
+      const id = setTimeout(() => setCountdown((c) => c - 1), 1000);
+      return () => clearTimeout(id);
     }
-  }, [countdown])
+    setMessage("FIGHT!");
+    setIsMatchStarted(true);
+    const id = setTimeout(() => setCountdown(null), 1000);
+    return () => clearTimeout(id);
+  }, [countdown]);
 
-  // Match timer
   useEffect(() => {
-    if (isMatchStarted && !gameOver && matchTimer > 0) {
-      const timer = setTimeout(() => {
-        setMatchTimer(matchTimer - 1)
-      }, 1000)
-      return () => clearTimeout(timer)
-    } else if (matchTimer === 0 && !gameOver) {
-      // Time over logic
-      const winner = playerHealth > botHealth ? "player" : "bot"
-      handleRoundEnd(winner)
-    }
-  }, [isMatchStarted, gameOver, matchTimer])
+    if (!isMatchStarted || gameOver || matchTimer <= 0) return;
+    const id = setTimeout(() => setMatchTimer((t) => t - 1), 1000);
+    return () => clearTimeout(id);
+  }, [isMatchStarted, gameOver, matchTimer]);
 
-  // Handle round end
-  const handleRoundEnd = (winner) => {
-    if (winner === "player") {
-      setPlayerWins(playerWins + 1)
-      setMessage("YOU WIN!")
-    } else {
-      setBotWins(botWins + 1)
-      setMessage("YOU LOSE!")
-    }
+  useEffect(() => {
+    if (!isMatchStarted || gameOver) return;
+    const id = setInterval(botAttack, BOT_ATTACK_RATE);
+    return () => clearInterval(id);
+  }, [isMatchStarted, gameOver]);
 
-    setGameOver(true)
+  function endRound(winner) {
+    // Set winner
+    winner === "player" ? setPlayerWins(1) : setBotWins(1);
 
-    // Check if match is over (best of 3)
-    if (playerWins + 1 >= 2 || botWins + 1 >= 2) {
-      setTimeout(
-        () =>
-          onGameOver({
-            victory: winner === "player",
-          }),
-        2000,
-      )
-    } else {
-      // Start next round
-      setTimeout(() => {
-        setCurrentRound(currentRound + 1)
-        setPlayerHealth(100)
-        setBotHealth(100)
-        setGameOver(false)
-        setMatchTimer(60)
-        setCountdown(3)
-        setIsMatchStarted(false)
-      }, 2000)
-    }
-  }
+    // Update message
+    setMessage(winner === "player" ? "YOU WIN!" : "YOU LOSE!");
+    setGameOver(true);
 
-  // Player attack function
-  const playerAttack = (attackType = "punch") => {
-    if (gameOver || !isMatchStarted) return
-
-    setIsPlayerAttacking(true)
-    setAttackType(attackType)
-
-    // Increase combo count
-    setComboCount((prev) => prev + 1)
-
-    // Reset combo after a delay if no new attacks
-    clearTimeout(window.comboTimeout)
-    window.comboTimeout = setTimeout(() => {
-      setComboCount(0)
-    }, 2000)
-
+    // Since we only need 1 round, the match is always done after one round
     setTimeout(() => {
-      setIsPlayerAttacking(false)
-      setAttackType(null)
-    }, 500)
-
-    // Random damage based on attack type
-    let damage
-    switch (attackType) {
-      case "kick":
-        damage = Math.floor(Math.random() * 16) + 10 // 10-25
-        break
-      case "special":
-        damage = Math.floor(Math.random() * 21) + 15 // 15-35
-        break
-      default: // punch
-        damage = Math.floor(Math.random() * 11) + 5 // 5-15
-    }
-
-    // Combo bonus
-    if (comboCount > 1) {
-      damage = Math.floor(damage * (1 + comboCount * 0.1))
-    }
-
-    const newBotHealth = Math.max(0, botHealth - damage)
-    setBotHealth(newBotHealth)
-
-    // Show hit effect
-    setHitPosition({
-      x: Math.random() * 20 + 60,
-      y: Math.random() * 40 + 30,
-    })
-    setShowHitEffect(true)
-    setTimeout(() => setShowHitEffect(false), 300)
-
-    setMessage(`${comboCount + 1} HIT COMBO! ${damage} DMG!`)
-
-    if (newBotHealth === 0) {
-      handleRoundEnd("player")
-    } else {
-      // Bot attacks back after a delay
-      setTimeout(botAttack, 1000)
-    }
+      // Call onGameOver with the result
+      onGameOver({ victory: winner === "player" });
+    }, 2000);
   }
 
-  // Bot attack function
-  const botAttack = () => {
-    if (gameOver || !isMatchStarted) return
+  function playerAttack() {
+    if (!isMatchStarted || gameOver || playerMode === "attack") return;
 
-    setIsBotAttacking(true)
+    setPlayerMode("attack");
+    setTimeout(() => setPlayerMode("idle"), PLAYER_FRAMES * FRAME_DURATION);
 
-    // Random attack type for bot
-    const botAttackType = ["punch", "kick", "special"][Math.floor(Math.random() * 3)]
+    const nextCombo = combo + 1;
+    setCombo(nextCombo);
+    clearTimeout(comboTimer.current);
+    comboTimer.current = setTimeout(() => setCombo(0), 2000);
 
-    setTimeout(() => setIsBotAttacking(false), 500)
+    const base = Math.floor(Math.random() * 11) + 5; // 5-15
+    const dmg = nextCombo > 1 ? Math.floor(base * (1 + nextCombo * 0.1)) : base;
 
-    // Random damage based on attack type
-    let damage
-    switch (botAttackType) {
-      case "kick":
-        damage = Math.floor(Math.random() * 14) + 8 // 8-21
-        break
-      case "special":
-        damage = Math.floor(Math.random() * 16) + 12 // 12-27
-        break
-      default: // punch
-        damage = Math.floor(Math.random() * 10) + 3 // 3-12
-    }
+    setBotHP((prev) => {
+      const hp = Math.max(0, prev - dmg);
+      if (hp === 0) endRound("player");
+      return hp;
+    });
 
-    const newPlayerHealth = Math.max(0, playerHealth - damage)
-    setPlayerHealth(newPlayerHealth)
-
-    // Show hit effect
-    setHitPosition({
-      x: Math.random() * 20 + 20,
-      y: Math.random() * 40 + 30,
-    })
-    setShowHitEffect(true)
-    setTimeout(() => setShowHitEffect(false), 300)
-
-    setMessage(`OPPONENT HITS YOU! ${damage} DMG!`)
-    setComboCount(0)
-
-    if (newPlayerHealth === 0) {
-      handleRoundEnd("bot")
-    }
+    setHitPos({ x: 60 + Math.random() * 20, y: 30 + Math.random() * 40 });
+    setShowHit(true);
+    setTimeout(() => setShowHit(false), 300);
+    setMessage(`${nextCombo} HIT COMBO! ${dmg} DMG!`);
   }
+
+  function botAttack() {
+    if (!isMatchStarted || gameOver) return;
+
+    setBotMode("attack");
+    setTimeout(() => setBotMode("idle"), BOT_FRAMES * FRAME_DURATION);
+
+    const dmg = Math.floor(Math.random() * 10) + 3;
+
+    setPlayerHP((prev) => {
+      const hp = Math.max(0, prev - dmg);
+      if (hp === 0) endRound("bot");
+      return hp;
+    });
+
+    setHitPos({ x: 20 + Math.random() * 20, y: 30 + Math.random() * 40 });
+    setShowHit(true);
+    setTimeout(() => setShowHit(false), 300);
+    setMessage(`OPPONENT HITS YOU! ${dmg} DMG!`);
+    setCombo(0);
+  }
+
+  const playerImg =
+    playerMode === "attack" ? PLAYER_ATTACK[playerFrame] : PLAYER_IDLE;
+  const botImg = botMode === "attack" ? BOT_ATTACK[botFrame] : BOT_IDLE;
 
   return (
     <div className="gameplay-container">
-      {/* Arcade cabinet frame */}
+      {/* countdown */}
       {countdown !== null && (
-            <div className="countdown-overlay">
-              <div className="countdown">{countdown === 0 ? "FIGHT!" : countdown}</div>
-            </div>
-          )}
+        <div className="countdown-overlay">
+          <div className="countdown">
+            {countdown === 0 ? "FIGHT!" : countdown}
+          </div>
+        </div>
+      )}
+
       <div className="arcade-frame">
         <div className="arcade-screen">
-          {/* Countdown overlay */}
-
+          {/* game-over */}
           {gameOver && (
             <div className="game-over-overlay">
-              <div className="game-over-text">{playerHealth > botHealth ? "YOU WIN!" : "YOU LOSE!"}</div>
+              <div className="game-over-text">
+                {playerHP > botHP ? "YOU WIN!" : "YOU LOSE!"}
+              </div>
             </div>
           )}
 
+          {/* HUD */}
           <div className="game-hud">
+            {/* player */}
             <div className="player-info">
               <div className="character-portrait player-portrait">
                 <img src="/assets/lifong.png" alt="Player" />
@@ -215,97 +235,102 @@ function GameplayScene({ character, onGameOver }) {
               <div className="player-health-container">
                 <div className="health-bar-wrapper">
                   <div className="health-bar-outer">
-                    <div className="health-bar-inner" style={{ width: `${playerHealth}%` }}></div>
+                    <div
+                      className="health-bar-inner"
+                      style={{ width: `${playerHP}%` }}
+                    />
                   </div>
                 </div>
                 <div className="player-name">PLAYER</div>
               </div>
             </div>
 
+            {/* round / timer */}
             <div className="match-info">
               <div className="round-display">
-                <div className="round-text">ROUND {currentRound}</div>
+                <div className="round-text">ROUND {round}</div>
                 <div className="round-indicators">
-                  <div className={`round-indicator ${playerWins >= 1 ? "won" : ""}`}></div>
-                  <div className={`round-indicator ${playerWins >= 2 ? "won" : ""}`}></div>
+                  <div
+                    className={`round-indicator ${
+                      playerWins >= 1 ? "won" : ""
+                    }`}
+                  />
                   <div className="vs-text">VS</div>
-                  <div className={`round-indicator ${botWins >= 1 ? "won" : ""}`}></div>
-                  <div className={`round-indicator ${botWins >= 2 ? "won" : ""}`}></div>
+                  <div
+                    className={`round-indicator ${botWins >= 1 ? "won" : ""}`}
+                  />
                 </div>
               </div>
               <div className="timer">{matchTimer}</div>
             </div>
 
+            {/* bot */}
             <div className="opponent-info">
               <div className="opponent-health-container">
                 <div className="health-bar-wrapper">
                   <div className="health-bar-outer">
-                    <div className="health-bar-inner" style={{ width: `${botHealth}%` }}></div>
+                    <div
+                      className="health-bar-inner"
+                      style={{ width: `${botHP}%` }}
+                    />
                   </div>
                 </div>
                 <div className="opponent-name">CPU</div>
               </div>
               <div className="character-portrait opponent-portrait">
-                <img src={character?.portrait || "/assets/player-portrait.png"} alt="Opponent" />
+                <img
+                  src={character?.portrait || "/assets/player-portrait.png"}
+                  alt="Opponent"
+                  className={character?.mirrorPortrait ? "mirrored-image" : ""}
+                />
               </div>
             </div>
           </div>
 
-          {/* Fighting arena with characters facing each other */}
+          {/* arena */}
           <div className="fighting-arena">
-            {/* Combo counter */}
-            {comboCount > 1 && (
+            {combo > 1 && (
               <div className="combo-counter">
-                <span className="combo-number">{comboCount}</span>
+                <span className="combo-number">{combo}</span>
                 <span className="combo-text">HIT COMBO!</span>
               </div>
             )}
 
-            {/* Hit effect */}
-            {showHitEffect && (
+            {showHit && (
               <div
                 className="hit-effect"
-                style={{
-                  left: `${hitPosition.x}%`,
-                  top: `${hitPosition.y}%`,
-                }}
+                style={{ left: `${hitPos.x}%`, top: `${hitPos.y}%` }}
               >
-                <div className="hit-splash"></div>
+                <div className="hit-splash" />
                 <div className="hit-text">HIT!</div>
               </div>
             )}
 
-            {/* Player character */}
-            <div className={`player ${isPlayerAttacking ? `attacking-${attackType || "punch"}` : ""}`}>
-              <img src="/assets/lifong.png" alt="Player" />
+            <div className="player">
+              <img src={playerImg} alt="Player" draggable={false} />
             </div>
-            <div className={`bot ${isBotAttacking ? "attacking" : ""}`}>
-              <img src={character?.image || "/assets/karate punch.png"} alt="Opponent" />
+            <div className="bot">
+              <img
+                src={botImg}
+                alt="Bot"
+                draggable={false}
+                className={character?.mirrorPortrait ? "mirrored-image" : ""}
+              />
             </div>
           </div>
 
-
-          {/* Controls at bottom */}
+          {/* kontrol */}
           <div className="controls">
             <button
               className="attack-button punch-button"
-              onClick={() => playerAttack("punch")}
+              onClick={playerAttack}
               disabled={gameOver || !isMatchStarted}
             >
               PUNCH
-            </button>
-            <button
-              className="attack-button kick-button"
-              onClick={() => playerAttack("kick")}
-              disabled={gameOver || !isMatchStarted}
-            >
-              KICK
             </button>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
-export default GameplayScene
