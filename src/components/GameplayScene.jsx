@@ -193,14 +193,15 @@ function GameplayScene({ character, onGameOver }) {
   return (
     <div className="gameplay-container">
       {/* Arcade cabinet frame */}
-      {/* Countdown overlay */}
-          {countdown !== null && (
+      {countdown !== null && (
             <div className="countdown-overlay">
               <div className="countdown">{countdown === 0 ? "FIGHT!" : countdown}</div>
             </div>
           )}
       <div className="arcade-frame">
         <div className="arcade-screen">
+          {/* Countdown overlay */}
+
           {/* Game over overlay */}
           {gameOver && (
             <div className="game-over-overlay">
@@ -212,7 +213,7 @@ function GameplayScene({ character, onGameOver }) {
           <div className="game-hud">
             <div className="player-info">
               <div className="character-portrait player-portrait">
-                <img src={character?.portrait || "/assets/player-portrait.png"} alt="Player" />
+                <img src="/assets/lifong.png" alt="Player" />
               </div>
               <div className="player-health-container">
                 <div className="health-bar-wrapper">
@@ -248,7 +249,7 @@ function GameplayScene({ character, onGameOver }) {
                 <div className="opponent-name">CPU</div>
               </div>
               <div className="character-portrait opponent-portrait">
-                <img src="/assets/opponent-portrait.png" alt="Opponent" />
+                <img src={character?.portrait || "/assets/player-portrait.png"} alt="Opponent" />
               </div>
             </div>
           </div>
@@ -286,10 +287,6 @@ function GameplayScene({ character, onGameOver }) {
             </div>
           </div>
 
-          {/* Message display */}
-          <div className="message-container">
-            <div className="message">{message}</div>
-          </div>
 
           {/* Controls at bottom */}
           <div className="controls">
@@ -306,13 +303,6 @@ function GameplayScene({ character, onGameOver }) {
               disabled={gameOver || !isMatchStarted}
             >
               KICK
-            </button>
-            <button
-              className="attack-button special-button"
-              onClick={() => playerAttack("special")}
-              disabled={gameOver || !isMatchStarted || comboCount < 2}
-            >
-              SPECIAL
             </button>
           </div>
         </div>
