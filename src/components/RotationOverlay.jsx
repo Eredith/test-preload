@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import "../styles/RotationOverlay.css"
+import "../styles/rotationoverlay.css"
 
 const RotationOverlay = () => {
   const [isPortrait, setIsPortrait] = useState(false)
