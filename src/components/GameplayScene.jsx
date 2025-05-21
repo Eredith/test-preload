@@ -284,7 +284,7 @@ export default function GameplayScene({ character, onGameOver }) {
                     />
                   </div>
                 </div>
-                <div className="opponent-name">CPU</div>
+                <div className="opponent-name">{character?.name || "CPU"}</div>
               </div>
               <div className="character-portrait opponent-portrait">
                 <img

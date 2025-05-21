@@ -59,6 +59,14 @@
   box-shadow: 0 2px 0 #cc7a00;
 }
 
+.tap-select {
+  margin-left: 300px;
+}
+
+.tap-select img {
+  width: 70%;
+}
+
 /* Responsive adjustments */
 @media (max-height: 600px) {
   .main-menu {

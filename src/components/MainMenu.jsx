@@ -16,6 +16,9 @@ function MainMenu({ onStartClick }) {
       <div className="char-options">
         <CharacterSelect onCharacterSelect={onStartClick} />
       </div>
+      <div className="tap-select">
+        <img src="/assets/tap.png" alt="tap-hand" />
+      </div>
     </div>
         </div>
 
