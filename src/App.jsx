@@ -35,7 +35,7 @@ function App() {
         }
       }
 
-      // Remove after first interaction
+      // Remove after first interactions
       document.removeEventListener('click', handleFullscreen)
     }
 
