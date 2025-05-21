@@ -1,13 +1,37 @@
+/* Main container */
 .gameplay-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
-  width: 100%;
-  position: relative;
+  width: 100vw;
+  background-color: #121212;
   overflow: hidden;
 }
 
-/* Countdown styling */
+/* Arcade cabinet styling */
+.arcade-frame {
+  width: 95vw;
+  height: 90vh;
+  background: linear-gradient(135deg, #333, #111);
+  border-radius: 10px;
+  border: 8px solid #222;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  position: relative;
+}
+
+.arcade-screen {
+  width: 100%;
+  height: 100%;
+  background: url("/placeholder.svg?height=1080&width=1920") center / cover;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Countdown overlay */
 .countdown-overlay {
   position: absolute;
   top: 0;
@@ -22,61 +46,83 @@
 }
 
 .countdown {
-  font-size: 5rem;
+  font-size: 8rem;
   color: #f3b41e;
   font-weight: bold;
   text-shadow: 0 0 20px rgba(243, 180, 30, 0.8);
   animation: pulse 1s infinite;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+/* Game over overlay */
+.game-over-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 10;
 }
 
-/* Health bars layout - Modified to match image */
-.health-containers {
+.game-over-text {
+  font-size: 6rem;
+  color: #f3b41e;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(243, 180, 30, 0.8);
+  animation: pulse 1s infinite;
+}
+
+/* HUD styling */
+.game-hud {
   display: flex;
-  flex-direction: column;
-  padding: 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 20px;
+  height: 15%;
   z-index: 5;
   gap: 10px;
 }
 
-.player-health-container, .opponent-health-container {
+.player-info,
+.opponent-info {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  width: 40%;
+}
+
+.opponent-info {
+  flex-direction: row-reverse;
+}
+
+.character-portrait {
+  width: 60px;
+  height: 60px;
+  border: 3px solid #f3b41e;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.character-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-health-container,
+.opponent-health-container {
+  margin: 0 10px;
   width: 100%;
 }
 
-.message-container {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 6;
+.health-bar-wrapper {
+  width: 100%;
 }
 
-.message {
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 1rem;
-  font-weight: bold;
-  text-align: center;
-  color: white;
-  white-space: nowrap;
-}
-
-.health-label {
-  color: white;
-  font-weight: bold;
-  margin-bottom: 5px;
-  text-align: left;
-}
-
-.health-outer {
+.health-bar-outer {
   height: 20px;
   background-color: #333;
   border: 2px solid #555;
@@ -84,45 +130,99 @@
   overflow: hidden;
 }
 
-.player-health .health-inner {
+.player-info .health-bar-inner {
   height: 100%;
   background: linear-gradient(to right, #ff3939, #ff7676);
   transition: width 0.3s ease-out;
 }
 
-.opponent-health .health-inner {
+.opponent-info .health-bar-inner {
   height: 100%;
   background: linear-gradient(to right, #39a0ff, #76c2ff);
   transition: width 0.3s ease-out;
 }
 
-.health-text {
+.player-name,
+.opponent-name {
   color: white;
   font-weight: bold;
-  text-align: left;
   margin-top: 5px;
+  text-align: center;
+}
+
+/* Match info styling */
+.match-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.round-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.round-text {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.round-indicators {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.round-indicator {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #333;
+  border: 2px solid #555;
+}
+
+.round-indicator.won {
+  background-color: #f3b41e;
+}
+
+.vs-text {
+  color: #f3b41e;
+  font-weight: bold;
+  margin: 0 5px;
+}
+
+.timer {
+  font-size: 2.5rem;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 /* Fighting arena - Modified for vertical layout */
 .fighting-arena {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 5%;
+  position: relative;
+  height: 70%;
 }
 
-.player, .bot {
-  max-height: 30vh;
+.player,
+.bot {
+  height: 90%;
   position: relative;
   transition: transform 0.2s ease-out;
 }
 
-.player img, .bot img {
-  max-height: 30vh;
-  max-width: 80vw;
+.player img,
+.bot img {
+  height: 100%;
+  max-width: 40vw;
   object-fit: contain;
 }
 
@@ -133,36 +233,189 @@
 
 .bot {
   transform: scaleX(-1); /* Character faces left */
-  order: 2; /* Opponent below player in vertical layout */
 }
 
-.player.attacking {
-  animation: playerAttack 0.5s ease-out;
+/* Attack animations */
+.player.attacking-punch {
+  animation: playerPunch 0.5s ease-out;
+}
+
+.player.attacking-kick {
+  animation: playerKick 0.5s ease-out;
+}
+
+.player.attacking-special {
+  animation: playerSpecial 0.5s ease-out;
 }
 
 .bot.attacking {
   animation: botAttack 0.5s ease-out;
 }
 
-@keyframes playerAttack {
-  0% { transform: scaleX(1) translateY(0); }
-  30% { transform: scaleX(1) translateY(-20px); }
-  100% { transform: scaleX(1) translateY(0); }
+@keyframes playerPunch {
+  0% {
+    transform: scaleX(1) translateX(0) rotate(0deg);
+  }
+  30% {
+    transform: scaleX(1) translateX(40px) rotate(0deg);
+  }
+  100% {
+    transform: scaleX(1) translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes playerKick {
+  0% {
+    transform: scaleX(1) translateX(0) rotate(0deg);
+  }
+  30% {
+    transform: scaleX(1) translateX(30px) rotate(5deg);
+  }
+  100% {
+    transform: scaleX(1) translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes playerSpecial {
+  0% {
+    transform: scaleX(1) translateX(0) scale(1);
+  }
+  10% {
+    transform: scaleX(1) translateX(0) scale(0.9);
+  }
+  50% {
+    transform: scaleX(1) translateX(50px) scale(1.1);
+  }
+  100% {
+    transform: scaleX(1) translateX(0) scale(1);
+  }
 }
 
 @keyframes botAttack {
-  0% { transform: scaleX(-1) translateY(0); }
-  30% { transform: scaleX(-1) translateY(20px); }
-  100% { transform: scaleX(-1) translateY(0); }
+  0% {
+    transform: scaleX(-1) translateX(0);
+  }
+  30% {
+    transform: scaleX(-1) translateX(-40px);
+  }
+  100% {
+    transform: scaleX(-1) translateX(0);
+  }
+}
+
+/* Hit effect */
+.hit-effect {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.hit-splash {
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  animation: splash 0.3s ease-out;
+}
+
+.hit-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ff3939;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-shadow: 0 0 5px #000;
+  animation: hitText 0.3s ease-out;
+}
+
+@keyframes splash {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes hitText {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Combo counter */
+.combo-counter {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #f3b41e;
+  text-shadow: 0 0 10px rgba(243, 180, 30, 0.8);
+  animation: comboAppear 0.3s ease-out;
+}
+
+.combo-number {
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+.combo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+@keyframes comboAppear {
+  0% {
+    transform: translateX(-50%) scale(0);
+  }
+  70% {
+    transform: translateX(-50%) scale(1.2);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* Message display */
+.message-container {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+}
+
+.message {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  white-space: nowrap;
 }
 
 /* Controls - Modified to match image */
 .controls {
-  padding: 15px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
+  justify-content: center;
+  gap: 20px;
+  padding: 15px;
+  height: 15%;
   z-index: 5;
 }
 
@@ -191,81 +444,107 @@
   cursor: not-allowed;
 }
 
-/* Ticket booking section - Added to match image */
-.ticket-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
+.punch-button {
+  background-color: #ff5e5e;
 }
 
-.ticket-button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 20px;
-  font-weight: bold;
+.kick-button {
+  background-color: #5e9fff;
 }
 
-/* Responsive adjustments */
-@media screen and (orientation: landscape) {
-  /* For landscape mobile, we might want to adjust some spacing */
-  .fighting-arena {
-    flex-direction: row;
-    justify-content: space-around;
-    gap: 10px;
+.special-button {
+  background-color: #9c5eff;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
   }
-  
-  .player, .bot {
-    max-height: 50vh;
+  50% {
+    transform: scale(1.2);
   }
-  
-  .health-containers {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-  
-  .player-health-container, .opponent-health-container {
-    width: 45%;
-  }
-  
-  .attack-button {
-    width: auto;
-    padding: 10px 30px;
+  100% {
+    transform: scale(1);
   }
 }
 
-@media screen and (orientation: landscape) and (max-height: 500px) {
-  .health-containers {
-    padding: 5px;
+/* Ensure landscape orientation */
+@media screen and (orientation: portrait) {
+  .gameplay-container {
+    /* Force landscape orientation */
+    transform: rotate(90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    position: absolute;
+    top: 100%;
+    left: 0;
   }
-  
-  .health-outer {
-    height: 15px;
+}
+
+/* Responsive adjustments for different screen sizes */
+@media screen and (max-width: 1200px) {
+  .countdown,
+  .game-over-text {
+    font-size: 5rem;
   }
-  
-  .health-label, .health-text {
-    font-size: 0.8rem;
-    margin: 2px 0;
+
+  .character-portrait {
+    width: 50px;
+    height: 50px;
   }
-  
-  .message {
-    font-size: 0.9rem;
-    padding: 5px 10px;
+
+  .timer {
+    font-size: 2rem;
   }
-  
-  .controls {
-    padding: 8px;
-  }
-  
+
   .attack-button {
     font-size: 1rem;
-    padding: 8px 25px;
+    padding: 8px 20px;
   }
-  
-  .player, .bot {
-    max-height: 40vh;
+}
+
+@media screen and (max-width: 768px) {
+  .countdown,
+  .game-over-text {
+    font-size: 4rem;
+  }
+
+  .character-portrait {
+    width: 40px;
+    height: 40px;
+  }
+
+  .health-bar-outer {
+    height: 15px;
+  }
+
+  .timer {
+    font-size: 1.5rem;
+  }
+
+  .player-name,
+  .opponent-name {
+    font-size: 0.8rem;
+  }
+
+  .round-text {
+    font-size: 0.8rem;
+  }
+
+  .round-indicator {
+    width: 10px;
+    height: 10px;
+  }
+
+  .attack-button {
+    font-size: 0.9rem;
+    padding: 6px 15px;
+  }
+
+  .message {
+    font-size: 1rem;
+    padding: 6px 12px;
   }
 }
