@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100%;
   width: 100vw;
   overflow: hidden;
 }
@@ -203,21 +203,21 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 0 5%;
+  padding: 0 10%;
   position: relative;
   height: 70%;
 }
 
 .player,
 .bot {
-  height: 90%;
+  height: 100%;
   position: relative;
   transition: transform 0.2s ease-out;
 }
 
 .player img,
 .bot img {
-  height: 100%;
+  height: 90%;
   max-width: 40vw;
   object-fit: contain;
 }
@@ -404,49 +404,58 @@
   white-space: nowrap;
 }
 
-/* Controls */
-.controls {
+.fight-button, .book-button {
+  position: absolute;
+  bottom: 90%; /* Position from bottom instead of using negative margin-top */
+  z-index: 10;
+}
+
+.fight-button {
+  bottom: 0; /* Position from top side */
+  right: 70px; /* Position from right side */
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding: 15px;
-  height: 15%;
-  z-index: 5;
+  justify-content: flex-end;
+  align-items: center;
 }
 
-.attack-button {
-  background-color: #f3b41e;
-  color: #000;
-  font-weight: bold;
-  font-size: 1.2rem;
-  padding: 10px 30px;
-  border: none;
-  border-radius: 50px;
+.book-button {
+  bottom: 0; /* Position from top side */
+  left: 70px; /* Position from left side */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.fight-button img, .book-button img {
+  width: 100%;
+  height: auto;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s;
+  transition: transform 0.2s ease-out;
 }
 
-.attack-button:hover:not(:disabled) {
-  transform: scale(1.05);
-  background-color: #ffca40;
+.victory-image-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  animation: fadeIn 0.5s ease-in;
 }
 
-.attack-button:disabled {
-  background-color: #777;
-  cursor: not-allowed;
+.victory-image {
+  max-width: 100%;
+  height: auto;
 }
 
-.punch-button {
-  background-color: #ff5e5e;
-}
-
-.kick-button {
-  background-color: #5e9fff;
-}
-
-.special-button {
-  background-color: #9c5eff;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 /* Animations */
@@ -489,13 +498,36 @@
   }
 
   .timer {
-    font-size: 2rem;
+    font-size: 1rem;
   }
 
-  .attack-button {
-    font-size: 1rem;
-    padding: 8px 20px;
-  }
+  .fight-button, .book-button {
+  position: absolute;
+  bottom: 90%; /* Position from bottom instead of using negative margin-top */
+}
+
+.fight-button {
+  bottom: -10px; /* Position from top side */
+  right: 70px; /* Position from right side */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.book-button {
+  bottom: 0; /* Position from top side */
+  left: 70px; /* Position from left side */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.fight-button img, .book-button img {
+  width: 60%;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.2s ease-out;
+}
 }
 
 @media screen and (max-width: 768px) {
@@ -529,11 +561,6 @@
   .round-indicator {
     width: 10px;
     height: 10px;
-  }
-
-  .attack-button {
-    font-size: 0.9rem;
-    padding: 6px 15px;
   }
 
   .message {

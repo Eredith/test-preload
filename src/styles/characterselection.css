@@ -2,8 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
+  margin-top: -50px; /* Move it higher by adding negative top margin */
+  position: relative; /* Add position to ensure proper stacking */
+  padding-top: 20px; /* Add some padding at the top if needed */
 }
 
 .character-select-screen h2 {
@@ -11,7 +14,6 @@
   font-weight: 900;
   color: #ffffff;
   text-transform: uppercase;
-  margin-bottom: 20px;
   text-shadow: 
     2px 2px 0 #000000,
     -2px 2px 0 #000000,
@@ -19,15 +21,15 @@
     -2px -2px 0 #000000,
     0 0 10px #ffff00,
     0 0 20px #ff9900;
+
 }
 
 .characters-container {
   display: flex;
   justify-content: center;
-  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
-}
+  margin: 0;
+;}
 
 .main-character-card {
   width: 150px;
@@ -39,7 +41,11 @@
 
 .main-character-card h3 {
   margin: 0;
+  margin-top: -120px; /* Added negative top margin to move text higher */
   font-size: 1.1em;
+  display: flex;
+  justify-content: center;
+  position: relative; /* Added position relative for better control */
 }
 
 
@@ -56,7 +62,7 @@
 }
 
 .character-image-container {
-  height: 150px;
+  height: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,8 +76,8 @@
 }
 
 .character-image-container img {
-  max-height: 140px;
-  max-width: 130px;
+  max-height: 180px;
+  max-width: auto;
   object-fit: contain;
   transition: all 0.2s ease-in-out;
 }
@@ -81,8 +87,12 @@
 }
 
 .character-card h3 {
-  margin: 0;
+   margin: 0;
+  margin-top: -120px; /* Added negative top margin to move text higher */
   font-size: 1.1em;
+  display: flex;
+  justify-content: center;
+  position: relative; /* Added position relative for better control */
 }
 
 .character-select-buttons {
@@ -136,14 +146,13 @@
 
 .red-arrow img {
   width: 40%;
+  margin-top: 50px  ;
   margin-right: 50px;
   
 }
 
 @media (max-width: 600px) {
-  .characters-container {
-    gap: 10px;
-  }
+
   
   .character-card {
     width: 120px;
