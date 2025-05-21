@@ -21,7 +21,6 @@ function GameplayScene({ character, onGameOver }) {
   const [hitPosition, setHitPosition] = useState({ x: 0, y: 0 })
   const [comboCount, setComboCount] = useState(0)
 
-  // Countdown effect when component mounts
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => {
@@ -192,24 +191,20 @@ function GameplayScene({ character, onGameOver }) {
 
   return (
     <div className="gameplay-container">
-      {/* Arcade cabinet frame */}
       <div className="arcade-frame">
         <div className="arcade-screen">
-          {/* Countdown overlay */}
           {countdown !== null && (
             <div className="countdown-overlay">
               <div className="countdown">{countdown === 0 ? "FIGHT!" : countdown}</div>
             </div>
           )}
 
-          {/* Game over overlay */}
           {gameOver && (
             <div className="game-over-overlay">
               <div className="game-over-text">{playerHealth > botHealth ? "YOU WIN!" : "YOU LOSE!"}</div>
             </div>
           )}
 
-          {/* Top HUD with health bars, timer, and round indicators */}
           <div className="game-hud">
             <div className="player-info">
               <div className="character-portrait player-portrait">
