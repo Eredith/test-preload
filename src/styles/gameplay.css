@@ -5,7 +5,6 @@
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: #121212;
   overflow: hidden;
 }
 
@@ -13,10 +12,6 @@
 .arcade-frame {
   width: 95vw;
   height: 90vh;
-  background: linear-gradient(135deg, #333, #111);
-  border-radius: 10px;
-  border: 8px solid #222;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
   overflow: hidden;
   position: relative;
 }
@@ -24,7 +19,6 @@
 .arcade-screen {
   width: 100%;
   height: 100%;
-  background: url("/placeholder.svg?height=1080&width=1920") center / cover;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -83,7 +77,6 @@
   padding: 10px 20px;
   height: 15%;
   z-index: 5;
-  gap: 10px;
 }
 
 .player-info,
@@ -201,7 +194,7 @@
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* Fighting arena - Modified for vertical layout */
+/* Fighting arena */
 .fighting-arena {
   flex: 1;
   display: flex;
@@ -228,7 +221,6 @@
 
 .player {
   transform: scaleX(1); /* Character faces right */
-  order: 1; /* Player on top in the vertical layout */
 }
 
 .bot {
@@ -409,7 +401,7 @@
   white-space: nowrap;
 }
 
-/* Controls - Modified to match image */
+/* Controls */
 .controls {
   display: flex;
   justify-content: center;
@@ -424,14 +416,12 @@
   color: #000;
   font-weight: bold;
   font-size: 1.2rem;
-  padding: 12px 40px;
+  padding: 10px 30px;
   border: none;
   border-radius: 50px;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.2s;
-  width: 80%;
-  max-width: 300px;
 }
 
 .attack-button:hover:not(:disabled) {
