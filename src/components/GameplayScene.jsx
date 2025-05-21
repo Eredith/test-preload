@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import "../styles/Gameplay.css";
+import "../styles/gameplay.css";
 
 export default function GameplayScene({ character, onGameOver }) {
   const FRAME_DURATION = 30;

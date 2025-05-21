@@ -1,4 +1,4 @@
-import '../styles/CharacterSelection.css';
+import '../styles/characterselection.css';
 
 function CharacterSelect({ onCharacterSelect }) {
   const characters = [
