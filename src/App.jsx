@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import "./app.css"
 import "./index.css"
-import "./styles/Gameplay.css"
-import "./styles/ResultsScreen.css"
-import "./styles/RotationOverlay.css"
+import "./styles/gameplay.css"
+import "./styles/resultsscreen.css"
+import "./styles/rotationoverlay.css"
 import MainMenu from './components/MainMenu'
 import CharacterSelect from './components/CharacterSelect'
 import GameplayScene from './components/GameplayScene'
