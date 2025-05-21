@@ -1,4 +1,4 @@
-import '../styles/mainMenu.css';
+import '../styles/mainmenu.css';
 import CharacterSelect from './CharacterSelect';
 
 function MainMenu({ onStartClick }) {
