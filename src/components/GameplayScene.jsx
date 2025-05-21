@@ -56,6 +56,7 @@ export default function GameplayScene({ character, onGameOver }) {
   const [combo, setCombo] = useState(0);
   const [showHit, setShowHit] = useState(false);
   const [hitPos, setHitPos] = useState({ x: 50, y: 40 });
+  const [buttonPressed, setButtonPressed] = useState(false);
 
   const rafId = useRef(null);
   const comboTimer = useRef(null);
@@ -114,16 +115,25 @@ export default function GameplayScene({ character, onGameOver }) {
   }, [playerMode, botMode, PLAYER_FRAMES, BOT_FRAMES, FRAME_DURATION]);
 
   useEffect(() => {
-    if (countdown === null) return;
-    if (countdown > 0) {
-      const id = setTimeout(() => setCountdown((c) => c - 1), 1000);
-      return () => clearTimeout(id);
-    }
-    setMessage("FIGHT!");
-    setIsMatchStarted(true);
-    const id = setTimeout(() => setCountdown(null), 1000);
+  if (countdown === null) return;
+  
+  if (countdown > 0) {
+    const id = setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => clearTimeout(id);
-  }, [countdown]);
+  }
+  
+  // When countdown hits 0
+  setMessage("FIGHT!");
+  setIsMatchStarted(true); // Enable gameplay immediately
+  
+  // Just clear the countdown message after 1 second but don't delay gameplay
+  const id = setTimeout(() => {
+    setCountdown(null);
+    setMessage(""); // Optional: clear the message
+  }, 1000);
+  
+  return () => clearTimeout(id);
+}, [countdown]);
 
   useEffect(() => {
     if (!isMatchStarted || gameOver || matchTimer <= 0) return;
@@ -142,14 +152,13 @@ export default function GameplayScene({ character, onGameOver }) {
     winner === "player" ? setPlayerWins(1) : setBotWins(1);
 
     // Update message
-    setMessage(winner === "player" ? "YOU WIN!" : "YOU LOSE!");
     setGameOver(true);
 
     // Since we only need 1 round, the match is always done after one round
     setTimeout(() => {
       // Call onGameOver with the result
       onGameOver({ victory: winner === "player" });
-    }, 2000);
+    }, 3000);
   }
 
   function playerAttack() {
@@ -219,9 +228,13 @@ export default function GameplayScene({ character, onGameOver }) {
           {/* game-over */}
           {gameOver && (
             <div className="game-over-overlay">
-              <div className="game-over-text">
-                {playerHP > botHP ? "YOU WIN!" : "YOU LOSE!"}
-              </div>
+              <div className="victory-image-container">
+    <img 
+      src="/assets/victory-image.png" 
+      alt="Victory" 
+      className="victory-image"
+    />
+  </div>
             </div>
           )}
 
@@ -248,20 +261,15 @@ export default function GameplayScene({ character, onGameOver }) {
             {/* round / timer */}
             <div className="match-info">
               <div className="round-display">
-                <div className="round-text">ROUND {round}</div>
-                <div className="round-indicators">
-                  <div
-                    className={`round-indicator ${
-                      playerWins >= 1 ? "won" : ""
-                    }`}
-                  />
-                  <div className="vs-text">VS</div>
-                  <div
-                    className={`round-indicator ${botWins >= 1 ? "won" : ""}`}
-                  />
-                </div>
+                <div className="title-container">
+        <img 
+          src="/assets/title.png" 
+          alt="Karate Kids Legends" 
+          className="game-title"
+        />
+      </div>
               </div>
-              <div className="timer">{matchTimer}</div>
+              <div className="timer">TIME : {matchTimer}</div>
             </div>
 
             {/* bot */}
@@ -320,14 +328,23 @@ export default function GameplayScene({ character, onGameOver }) {
           </div>
 
           {/* kontrol */}
-          <div className="controls">
-            <button
-              className="attack-button punch-button"
-              onClick={playerAttack}
-              disabled={gameOver || !isMatchStarted}
-            >
-              PUNCH
-            </button>
+          <div 
+            className="fight-button" 
+            onClick={playerAttack}
+            onMouseDown={() => !gameOver && isMatchStarted && setButtonPressed(true)}
+            onMouseUp={() => setButtonPressed(false)}
+            onMouseLeave={() => setButtonPressed(false)}
+            onTouchStart={() => !gameOver && isMatchStarted && setButtonPressed(true)}
+            onTouchEnd={() => setButtonPressed(false)}
+            disabled={gameOver || !isMatchStarted}
+          >
+              <img 
+                src={buttonPressed ? "./assets/Fight-Button.png" : "./assets/tap-fight.png"} 
+                alt="Punch" 
+              />
+          </div>
+           <div className="book-button">
+            <img src="/assets/Book-ticket.png" alt="" />
           </div>
         </div>
       </div>

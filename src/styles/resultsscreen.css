@@ -2,7 +2,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 70vh;
+  min-height: 100vh;
+  background-image: url("/assets/end-screen.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .results-content {
@@ -49,55 +59,49 @@
   line-height: 1.4;
 }
 
+.play-again,
+.book-ticket {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-again img,
+.book-ticket img {
+  width: 70%;
+  height: auto;
+  margin-right: 5px;
+}
+
 .results-buttons {
   display: flex;
-  gap: 15px;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px; /* Space after the cinema text */
+  width: 100%;
 }
 
-.play-again-button, .main-menu-button {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.play-again-button {
-  background-color: #30a0f0;
-  color: white;
-}
-
-.play-again-button:hover {
-  background-color: #2090e0;
-  transform: scale(1.05);
-}
-
-.main-menu-button {
-  background-color: #808080;
-  color: white;
-}
-
-.main-menu-button:hover {
-  background-color: #909090;
-  transform: scale(1.05);
+/* Position for the cinema release date text */
+.cinema-release {
+  margin-top: 20px;
+  text-align: center;
 }
 
 @media (max-width: 600px) {
   .results-content {
     padding: 20px;
   }
-  
-  .victory-title, .defeat-title {
+
+  .victory-title,
+  .defeat-title {
     font-size: 2rem;
   }
-  
+
   .results-message {
     font-size: 1rem;
   }
-  
+
   .results-buttons {
-    flex-direction: column;
+    gap: 10px;
   }
 }
