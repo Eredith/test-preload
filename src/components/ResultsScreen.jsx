@@ -1,4 +1,4 @@
-import '../styles/ResultsScreen.css';
+import '../styles/resultsscreen.css';
 
 function ResultsScreen({ onPlayAgain, onMainMenu }) {
   
