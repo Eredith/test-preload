@@ -1,9 +1,12 @@
 * {
   box-sizing: border-box;
+  touch-action: manipulation;
+
 }
 
 body {
   margin: 0;
+  padding: 0;
   font-family: 'Arial', sans-serif;
   background-color: #111; /* Fallback color */
   background-image: url("/assets/game-bg.png");
@@ -12,14 +15,41 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   min-height: 100vh;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
 
+
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 1rem;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
   text-align: center;
+  overflow: hidden;
 }
+
+.gameplay-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.arcade-frame {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 
 .fighting-game {
   display: flex;

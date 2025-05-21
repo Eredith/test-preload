@@ -1,7 +1,6 @@
 import '../styles/ResultsScreen.css';
 
-function ResultsScreen({ result, onPlayAgain, onMainMenu }) {
-  const isVictory = result?.victory;
+function ResultsScreen({ onPlayAgain, onMainMenu }) {
   
   return (
     <div className="results-screen">

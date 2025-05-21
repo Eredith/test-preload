@@ -4,9 +4,9 @@
   align-items: center;
   max-width: 100%;
   margin: 0 auto;
-  margin-top: -50px; /* Move it higher by adding negative top margin */
+  margin-top: -80px; /* Move it higher by adding negative top margin */
   position: relative; /* Add position to ensure proper stacking */
-  padding-top: 20px; /* Add some padding at the top if needed */
+  padding-top: 25px; /* Add some padding at the top if needed */
 }
 
 .character-select-screen h2 {
@@ -55,6 +55,8 @@
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+    -webkit-tap-highlight-color: transparent;
+
 }
 
 .character-card:hover {

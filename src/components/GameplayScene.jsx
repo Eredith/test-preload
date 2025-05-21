@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
@@ -7,7 +8,7 @@ export default function GameplayScene({ character, onGameOver }) {
   const FRAME_DURATION = 30;
   const BOT_ATTACK_RATE = 3000;
   const PLAYER_FRAMES = 36;
-  const BOT_FRAMES = 80;
+  const BOT_FRAMES = character?.attackFrames?.length;
 
   const PLAYER_ATTACK = useMemo(
     () =>
@@ -229,12 +230,12 @@ export default function GameplayScene({ character, onGameOver }) {
           {gameOver && (
             <div className="game-over-overlay">
               <div className="victory-image-container">
-    <img 
-      src="/assets/victory-image.png" 
-      alt="Victory" 
-      className="victory-image"
-    />
-  </div>
+                <img 
+                  src="/assets/victory-image.png" 
+                  alt="Victory" 
+                  className="victory-image"
+                />
+              </div>
             </div>
           )}
 
@@ -254,7 +255,7 @@ export default function GameplayScene({ character, onGameOver }) {
                     />
                   </div>
                 </div>
-                <div className="player-name">PLAYER</div>
+                <div className="player-name">LI FONG</div>
               </div>
             </div>
 

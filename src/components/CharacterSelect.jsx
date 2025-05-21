@@ -11,7 +11,7 @@ function CharacterSelect({ onCharacterSelect }) {
       attackFrames: Array.from({ length: 79 }, (_, i) =>
         `/assets/Daniel Style_1/Daniel_MiyagiStyle_01c_${String(i).padStart(5, "0")}.png`
       ),
-      idleImg: '/assets/Daniel Style_1/Daniel_MiyagiStyle_01c_00028.png',
+      idleImg: '/assets/Daniel Style_1/Daniel_MiyagiStyle_01c_00000.png',
     },
     {
       id: 'mrhan',
@@ -31,35 +31,38 @@ function CharacterSelect({ onCharacterSelect }) {
   };
 
   return (
-    <div className="character-select-screen">
-      <h2>Which Teacher Would You Like To Train With?</h2>
-      
-      <div className="characters-container">
-        <div className="main-character-card">
-          <div className="character-image-container">
-          <img src="/assets/lifong.png" alt="lifong" />
-        </div>
-        <h3>Li-Fong</h3>
-        </div>
-        
-        <div className="red-arrow">
-          <img src="assets/red-arrow.png" alt="red arrow" />
-        </div>
-
-        {characters.map(character => (
-          <div 
-            key={character.id}
-            className="character-card"
-            onClick={() => handleSelect(character)}
-          >
-            <div className="character-image-container">
-              <img src={character.image} alt={character.name} />
-            </div>
-            <h3>{character.name}</h3>
-          </div>
-        ))}
+    <div>
+      <div style={{scale:0.6}}>
+        <img src='/assets/textwhich.png' alt='text'/>
       </div>
-    </div>
+      <div className="character-select-screen">  
+          <div className="characters-container">
+            <div className="main-character-card">
+              <div className="character-image-container">
+              <img src="/assets/lifong.png" alt="lifong" />
+            </div>
+            <h3>Li-Fong</h3>
+            </div>
+            
+            <div className="red-arrow">
+              <img src="assets/red-arrow.png" alt="red arrow" />
+            </div>
+
+            {characters.map(character => (
+              <div 
+                key={character.id}
+                className="character-card"
+                onClick={() => handleSelect(character)}
+              >
+                <div className="character-image-container">
+                  <img src={character.image} alt={character.name} />
+                </div>
+                <h3>{character.name}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>      
   );
 }
 

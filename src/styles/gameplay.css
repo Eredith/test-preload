@@ -3,31 +3,45 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh; /* Change from 100% to 100vh */
   width: 100vw;
   overflow: hidden;
-}
-
-.mirrored-image {
-  transform: scaleX(-1);
+  position: fixed; /* Add fixed positioning */
+  top: 0;
+  left: 0;
+  margin: 0; /* Remove any default margins */
+  padding: 0; /* Remove any default padding */
 }
 
 /* Arcade cabinet styling */
 .arcade-frame {
-  width: 95vw;
-  height: 90vh;
+  width: 100vw; /* Change from 95vw to 100vw */
+  height: 100vh; /* Change from 90vh to 100vh */
   overflow: hidden;
   position: relative;
+  margin: 0;
+  padding: 0;
 }
 
+/* Add this to ensure the arcade screen takes full space */
 .arcade-screen {
   width: 100%;
   height: 100%;
-  position: relative;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
+
+/* Add this to ensure the body and html elements don't have margins */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
 
 /* Countdown overlay */
 .countdown-overlay {
@@ -62,6 +76,7 @@
   justify-content: center;
   align-items: center;
   z-index: 10;
+  scale: 150%;
 }
 
 .game-over-text {
@@ -77,7 +92,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 10px 20px;
+  padding: 25px 20px;
   height: 15%;
   z-index: 5;
 }
@@ -86,7 +101,7 @@
 .opponent-info {
   display: flex;
   align-items: center;
-  width: 40%;
+  width: 100%;
 }
 
 .opponent-info {
@@ -96,10 +111,7 @@
 .character-portrait {
   width: 60px;
   height: 60px;
-  border: 3px solid #f3b41e;
-  border-radius: 5px;
   overflow: hidden;
-  background-color: #000;
 }
 
 .character-portrait img {
@@ -120,9 +132,9 @@
 
 .health-bar-outer {
   height: 20px;
-  background-color: #333;
+  background-color: #fff;
   border: 2px solid #555;
-  border-radius: 10px;
+  border-radius: 5px;
   overflow: hidden;
 }
 
@@ -203,7 +215,8 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 0 10%;
+  padding: 0 25%;
+  margin-top: 50px;
   position: relative;
   height: 70%;
 }
@@ -360,11 +373,14 @@
   color: #f3b41e;
   text-shadow: 0 0 10px rgba(243, 180, 30, 0.8);
   animation: comboAppear 0.3s ease-out;
+  z-index: 9;
+
 }
 
 .combo-number {
   font-size: 4rem;
   font-weight: bold;
+
 }
 
 .combo-text {
@@ -408,6 +424,8 @@
   position: absolute;
   bottom: 90%; /* Position from bottom instead of using negative margin-top */
   z-index: 10;
+  margin-bottom: 10px;
+  
 }
 
 .fight-button {
@@ -416,6 +434,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  
 }
 
 .book-button {
@@ -431,6 +450,8 @@
   height: auto;
   cursor: pointer;
   transition: transform 0.2s ease-out;
+    -webkit-tap-highlight-color: transparent;
+
 }
 
 .victory-image-container {
@@ -471,19 +492,24 @@
   }
 }
 
-/* Ensure landscape orientation */
 @media screen and (orientation: portrait) {
-  .gameplay-container {
-    /* Force landscape orientation */
-    transform: rotate(90deg);
-    transform-origin: left top;
-    width: 100vh;
-    height: 100vw;
-    position: absolute;
-    top: 100%;
-    left: 0;
-  }
+/* Main container */
+.gameplay-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Change from 100% to 100vh */
+  width: 100vw;
+  overflow: hidden;
+  position: fixed; /* Add fixed positioning */
+  top: 0;
+  left: 0;
+  margin: 0; /* Remove any default margins */
+  padding: 0; /* Remove any default padding */
 }
+}
+
+
 
 /* Responsive adjustments for different screen sizes */
 @media screen and (max-width: 1200px) {
