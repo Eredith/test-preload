@@ -64,7 +64,25 @@ const countdownSoundRef = useRef(null);
 const hitSoundRef = useRef(null);
 const bgmRef = useRef(null);
 const growlSoundRef = useRef(null);
+const victorySoundRef = useRef(null);
+const loseSoundRef = useRef(null);
   const [bgmPlaying, setBgmPlaying] = useState(false);
+
+// Add this function to play the victory sound
+const playVictorySound = () => {
+  if (victorySoundRef.current) {
+    victorySoundRef.current.currentTime = 0;
+    victorySoundRef.current.play().catch(err => console.error("Error playing victory sound:", err));
+  }
+};
+
+// Add a function to play the lose sound
+const playLoseSound = () => {
+  if (loseSoundRef.current) {
+    loseSoundRef.current.currentTime = 0;
+    loseSoundRef.current.play().catch(err => console.error("Error playing lose sound:", err));
+  }
+};
 
 // Add these functions to play sounds
 const playCountdownSound = () => {
@@ -117,23 +135,19 @@ useEffect(() => {
 
   // Stop BGM when game is over
   useEffect(() => {
-    if (gameOver && bgmRef.current && bgmPlaying) {
-      // Fade out the BGM over 2 seconds
-      const fadeOut = setInterval(() => {
-        if (bgmRef.current.volume > 0.05) {
-          bgmRef.current.volume -= 0.05;
-        } else {
-          bgmRef.current.pause();
-          bgmRef.current.currentTime = 0;
-          bgmRef.current.volume = 0.5; // Reset volume for next time
-          setBgmPlaying(false);
-          clearInterval(fadeOut);
-        }
-      }, 100);
-      
-      return () => clearInterval(fadeOut);
+  if (gameOver && bgmRef.current && bgmPlaying) {
+    // Store the interval reference globally so we can clear it from anywhere
+    if (window._bgmFadeOutInterval) {
+      clearInterval(window._bgmFadeOutInterval);
     }
-  }, [gameOver, bgmPlaying]);
+    
+    // Immediate stop without fade for cleaner transition
+    bgmRef.current.pause();
+    bgmRef.current.currentTime = 0;
+    bgmRef.current.volume = 0.5; // Reset volume
+    setBgmPlaying(false);
+  }
+}, [gameOver, bgmPlaying]);
 
   useEffect(() => {
     let lastTime = 0;
@@ -232,28 +246,39 @@ if (countdown === 3) {
   // Update message
   setGameOver(true);
   
-  // Immediately stop BGM with a quick fade out
-  if (bgmRef.current && bgmPlaying) {
-    const quickFadeOut = setInterval(() => {
-      if (bgmRef.current.volume > 0.05) {
-        bgmRef.current.volume -= 0.1; // Faster fade out
-      } else {
-        bgmRef.current.pause();
-        bgmRef.current.currentTime = 0;
-        bgmRef.current.volume = 0.5; // Reset volume
-        setBgmPlaying(false);
-        clearInterval(quickFadeOut);
-      }
-    }, 50); // Shorter interval for faster fade
+  // Play appropriate sound based on who won
+  if (winner === "player") {
+    playVictorySound();
+  } else {
+    playLoseSound();
   }
 
-  // Since we only need 1 round, the match is always done after one round
-  setTimeout(() => {
-    // Make sure BGM is fully stopped before transitioning
+  // Cleanup all audio-related timers
+  if (window._bgmFadeOutInterval) {
+    clearInterval(window._bgmFadeOutInterval);
+  }
+  
+  // Create a consistent way to handle BGM stopping
+  const stopBgm = () => {
     if (bgmRef.current) {
       bgmRef.current.pause();
       bgmRef.current.currentTime = 0;
+      bgmRef.current.volume = 0.5; // Reset volume for next time
+      setBgmPlaying(false);
     }
+  };
+  
+  // Stop BGM immediately
+  stopBgm();
+
+  // Cleanup animations
+  cancelAnimationFrame(rafId.current);
+  clearTimeout(comboTimer.current);
+
+  // Since we only need 1 round, the match is always done after one round
+  setTimeout(() => {
+    // Double-check BGM is fully stopped before transitioning
+    stopBgm();
     
     // Call onGameOver with the result
     onGameOver({ victory: winner === "player" });
@@ -341,6 +366,18 @@ if (countdown === 3) {
     <audio 
       ref={growlSoundRef}
       src="/assets/sounds/growl.mp3"
+      preload="auto"
+    />
+    {/* Add the victory sound */}
+    <audio 
+      ref={victorySoundRef}
+      src="/assets/sounds/victory.mp3"
+      preload="auto"
+    />
+    {/* Add the lose sound */}
+    <audio 
+      ref={loseSoundRef}
+      src="/assets/sounds/lose.mp3"
       preload="auto"
     />
       {/* countdown */}
