@@ -63,6 +63,7 @@ export default function GameplayScene({ character, onGameOver }) {
 const countdownSoundRef = useRef(null);
 const hitSoundRef = useRef(null);
 const bgmRef = useRef(null);
+const growlSoundRef = useRef(null);
   const [bgmPlaying, setBgmPlaying] = useState(false);
 
 // Add these functions to play sounds
@@ -80,6 +81,14 @@ const playHitSound = () => {
       hitSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
     }
   };
+
+  // Add a function to play the growl sound
+const playGrowlSound = () => {
+  if (growlSoundRef.current) {
+    growlSoundRef.current.currentTime = 0;
+    growlSoundRef.current.play().catch(err => console.error("Error playing growl sound:", err));
+  }
+};
 
   // Function to handle background music
   const toggleBgm = () => {
@@ -217,18 +226,39 @@ if (countdown === 3) {
   }, [isMatchStarted, gameOver]);
 
   function endRound(winner) {
-    // Set winner
-    winner === "player" ? setPlayerWins(1) : setBotWins(1);
+  // Set winner
+  winner === "player" ? setPlayerWins(1) : setBotWins(1);
 
-    // Update message
-    setGameOver(true);
-
-    // Since we only need 1 round, the match is always done after one round
-    setTimeout(() => {
-      // Call onGameOver with the result
-      onGameOver({ victory: winner === "player" });
-    }, 3000);
+  // Update message
+  setGameOver(true);
+  
+  // Immediately stop BGM with a quick fade out
+  if (bgmRef.current && bgmPlaying) {
+    const quickFadeOut = setInterval(() => {
+      if (bgmRef.current.volume > 0.05) {
+        bgmRef.current.volume -= 0.1; // Faster fade out
+      } else {
+        bgmRef.current.pause();
+        bgmRef.current.currentTime = 0;
+        bgmRef.current.volume = 0.5; // Reset volume
+        setBgmPlaying(false);
+        clearInterval(quickFadeOut);
+      }
+    }, 50); // Shorter interval for faster fade
   }
+
+  // Since we only need 1 round, the match is always done after one round
+  setTimeout(() => {
+    // Make sure BGM is fully stopped before transitioning
+    if (bgmRef.current) {
+      bgmRef.current.pause();
+      bgmRef.current.currentTime = 0;
+    }
+    
+    // Call onGameOver with the result
+    onGameOver({ victory: winner === "player" });
+  }, 3000);
+}
 
   function playerAttack() {
     if (!isMatchStarted || gameOver || playerMode === "attack") return;
@@ -252,6 +282,8 @@ if (countdown === 3) {
 
     setHitPos({ x: 60 + Math.random() * 20, y: 30 + Math.random() * 40 });
     setShowHit(true);
+     // Play the growl sound when attacking
+  playGrowlSound();
         playHitSound(); // Play sound when hit shows
 
     setTimeout(() => setShowHit(false), 300);
@@ -274,6 +306,8 @@ if (countdown === 3) {
 
     setHitPos({ x: 20 + Math.random() * 20, y: 30 + Math.random() * 40 });
     setShowHit(true);
+     // Play the growl sound when attacking
+        playGrowlSound();
         playHitSound(); // Play sound when hit shows
 
     setTimeout(() => setShowHit(false), 300);
@@ -301,6 +335,12 @@ if (countdown === 3) {
       <audio 
       ref={countdownSoundRef}
       src="/assets/sounds/countdown.mp3"
+      preload="auto"
+    />
+    {/* Add the new growl sound */}
+    <audio 
+      ref={growlSoundRef}
+      src="/assets/sounds/growl.mp3"
       preload="auto"
     />
       {/* countdown */}
