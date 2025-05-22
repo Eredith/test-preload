@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import "../styles/gameplay.css";
+import assetCache from '../utils/AssetCache';
 
 export default function GameplayScene({ character, onGameOver }) {
   const FRAME_DURATION = 30;
@@ -14,11 +15,11 @@ export default function GameplayScene({ character, onGameOver }) {
     () =>
       Array.from(
         { length: PLAYER_FRAMES },
-        (_, i) =>
-          `/assets/Li_FongStyle_01/Li_FongStyle_01_${String(i).padStart(
-            5,
-            "0"
-          )}.png`
+        (_, i) => {
+          const path = `/assets/Li_FongStyle_01/Li_FongStyle_01_${String(i).padStart(5, "0")}.png`;
+          // Use cached asset if available or fall back to path
+          return path;
+        }
       ),
     []
   );
@@ -29,10 +30,10 @@ export default function GameplayScene({ character, onGameOver }) {
       character?.attackFrames ??
       Array.from(
         { length: BOT_FRAMES },
-        (_, i) =>
-          `/assets/Default_KungFu_Style/Default_KungFuStyle_${String(
-            i
-          ).padStart(5, "0")}.png`
+        (_, i) => {
+          const path = `/assets/Default_KungFu_Style/Default_KungFuStyle_${String(i).padStart(5, "0")}.png`;
+          return path;
+        }
       ),
     [character]
   );
@@ -148,6 +149,23 @@ useEffect(() => {
     setBgmPlaying(false);
   }
 }, [gameOver, bgmPlaying]);
+
+const renderCachedImage = (src, alt, className = '') => {
+    const cachedImg = assetCache.getImage(src);
+    if (cachedImg) {
+      // If we have the cached image, create an efficient rendering
+      return (
+        <img 
+          src={cachedImg.src} 
+          alt={alt} 
+          className={className} 
+          draggable={false} 
+        />
+      );
+    }
+    // Fallback to normal image tag if not cached
+    return <img src={src} alt={alt} className={className} draggable={false} />;
+  };
 
   useEffect(() => {
     let lastTime = 0;
@@ -395,11 +413,7 @@ if (countdown === 3) {
           {gameOver && (
             <div className="game-over-overlay">
               <div className="victory-image-container">
-                <img 
-                  src="/assets/victory-image.png" 
-                  alt="Victory" 
-                  className="victory-image"
-                />
+                {renderCachedImage("/assets/victory-image.png", "Victory", "victory-image")}
               </div>
             </div>
           )}
@@ -409,7 +423,7 @@ if (countdown === 3) {
             {/* player */}
             <div className="player-info">
               <div className="character-portrait player-portrait">
-                <img src="/assets/lifong.png" alt="Player" />
+                {renderCachedImage("/assets/lifong.png", "Player")}
               </div>
               <div className="player-health-container">
                 <div className="health-bar-wrapper">
@@ -428,12 +442,8 @@ if (countdown === 3) {
             <div className="match-info">
               <div className="round-display">
                 <div className="title-container">
-        <img 
-          src="/assets/title.png" 
-          alt="Karate Kids Legends" 
-          className="game-title"
-        />
-      </div>
+                  {renderCachedImage("/assets/title.png", "Karate Kids Legends", "game-title")}
+                </div>
               </div>
               <div className="timer">TIME : {matchTimer}</div>
             </div>
@@ -452,11 +462,11 @@ if (countdown === 3) {
                 <div className="opponent-name">{character?.name || "CPU"}</div>
               </div>
               <div className="character-portrait opponent-portrait">
-                <img
-                  src={character?.portrait || "/assets/player-portrait.png"}
-                  alt="Opponent"
-                  className={character?.mirrorPortrait ? "mirrored-image" : ""}
-                />
+                {renderCachedImage(
+                  character?.portrait || "/assets/player-portrait.png", 
+                  "Opponent", 
+                  character?.mirrorPortrait ? "mirrored-image" : ""
+                )}
               </div>
             </div>
           </div>
@@ -481,15 +491,14 @@ if (countdown === 3) {
             )}
 
             <div className="player">
-              <img src={playerImg} alt="Player" draggable={false} />
+              {renderCachedImage(playerImg, "Player")}
             </div>
             <div className="bot">
-              <img
-                src={botImg}
-                alt="Bot"
-                draggable={false}
-                className={character?.mirrorPortrait ? "mirrored-image" : ""}
-              />
+              {renderCachedImage(
+                botImg, 
+                "Bot", 
+                character?.mirrorPortrait ? "mirrored-image" : ""
+              )}
             </div>
           </div>
 
@@ -504,13 +513,13 @@ if (countdown === 3) {
             onTouchEnd={() => setButtonPressed(false)}
             disabled={gameOver || !isMatchStarted}
           >
-              <img 
-                src={buttonPressed ? "./assets/Fight-Button.png" : "./assets/tap-fight.png"} 
-                alt="Punch" 
-              />
+              {renderCachedImage(
+                buttonPressed ? "/assets/Fight-Button.png" : "/assets/tap-fight.png", 
+                "Punch"
+              )}
           </div>
            <div className="book-button">
-            <img src="/assets/Book-ticket.png" alt="" />
+            {renderCachedImage("/assets/Book-ticket.png", "")}
           </div>
         </div>
       </div>
