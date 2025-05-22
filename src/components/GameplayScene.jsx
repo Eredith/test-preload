@@ -60,8 +60,95 @@ export default function GameplayScene({ character, onGameOver }) {
   const [hitPos, setHitPos] = useState({ x: 50, y: 40 });
   const [buttonPressed, setButtonPressed] = useState(false);
 
+// audio sfx
+const countdownSoundRef = useRef(null);
+const hitSoundRef = useRef(null);
+const bgmRef = useRef(null);
+const growlSoundRef = useRef(null);
+const victorySoundRef = useRef(null);
+const loseSoundRef = useRef(null);
+  const [bgmPlaying, setBgmPlaying] = useState(false);
+
+// Add this function to play the victory sound
+const playVictorySound = () => {
+  if (victorySoundRef.current) {
+    victorySoundRef.current.currentTime = 0;
+    victorySoundRef.current.play().catch(err => console.error("Error playing victory sound:", err));
+  }
+};
+
+// Add a function to play the lose sound
+const playLoseSound = () => {
+  if (loseSoundRef.current) {
+    loseSoundRef.current.currentTime = 0;
+    loseSoundRef.current.play().catch(err => console.error("Error playing lose sound:", err));
+  }
+};
+
+// Add these functions to play sounds
+const playCountdownSound = () => {
+  if (countdownSoundRef.current) {
+    countdownSoundRef.current.currentTime = 0;
+    countdownSoundRef.current.play()
+      .catch(err => console.error("Error playing countdown sound:", err));
+  }
+};
+
+const playHitSound = () => {
+    if (hitSoundRef.current) {
+      hitSoundRef.current.currentTime = 0; // Reset the audio to start
+      hitSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
+    }
+  };
+
+  // Add a function to play the growl sound
+const playGrowlSound = () => {
+  if (growlSoundRef.current) {
+    growlSoundRef.current.currentTime = 0;
+    growlSoundRef.current.play().catch(err => console.error("Error playing growl sound:", err));
+  }
+};
+
+  // Function to handle background music
+  const toggleBgm = () => {
+    if (bgmRef.current) {
+      if (bgmPlaying) {
+        bgmRef.current.pause();
+      } else {
+        bgmRef.current.play().catch(err => console.error("Error playing BGM:", err));
+      }
+      setBgmPlaying(!bgmPlaying);
+    }
+  };
+
   const rafId = useRef(null);
   const comboTimer = useRef(null);
+
+useEffect(() => {
+    if (bgmRef.current && !bgmPlaying) {
+      bgmRef.current.volume = 0.5; // Set volume to 50%
+      bgmRef.current.loop = true; // Loop the BGM
+      bgmRef.current.play()
+        .then(() => setBgmPlaying(true))
+        .catch(err => console.error("Error auto-playing BGM:", err));
+    }
+  }, [isMatchStarted, bgmPlaying]);
+
+  // Stop BGM when game is over
+  useEffect(() => {
+  if (gameOver && bgmRef.current && bgmPlaying) {
+    // Store the interval reference globally so we can clear it from anywhere
+    if (window._bgmFadeOutInterval) {
+      clearInterval(window._bgmFadeOutInterval);
+    }
+    
+    // Immediate stop without fade for cleaner transition
+    bgmRef.current.pause();
+    bgmRef.current.currentTime = 0;
+    bgmRef.current.volume = 0.5; // Reset volume
+    setBgmPlaying(false);
+  }
+}, [gameOver, bgmPlaying]);
 
 const renderCachedImage = (src, alt, className = '') => {
     const cachedImg = assetCache.getImage(src);
@@ -136,6 +223,11 @@ const renderCachedImage = (src, alt, className = '') => {
   useEffect(() => {
   if (countdown === null) return;
   
+if (countdown === 3) {
+    // Play sound only at the first count (3)
+    playCountdownSound();
+  }
+
   if (countdown > 0) {
     const id = setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => clearTimeout(id);
@@ -144,7 +236,6 @@ const renderCachedImage = (src, alt, className = '') => {
   // When countdown hits 0
   setMessage("FIGHT!");
   setIsMatchStarted(true); // Enable gameplay immediately
-  
   // Just clear the countdown message after 1 second but don't delay gameplay
   const id = setTimeout(() => {
     setCountdown(null);
@@ -167,18 +258,50 @@ const renderCachedImage = (src, alt, className = '') => {
   }, [isMatchStarted, gameOver]);
 
   function endRound(winner) {
-    // Set winner
-    winner === "player" ? setPlayerWins(1) : setBotWins(1);
+  // Set winner
+  winner === "player" ? setPlayerWins(1) : setBotWins(1);
 
-    // Update message
-    setGameOver(true);
-
-    // Since we only need 1 round, the match is always done after one round
-    setTimeout(() => {
-      // Call onGameOver with the result
-      onGameOver({ victory: winner === "player" });
-    }, 3000);
+  // Update message
+  setGameOver(true);
+  
+  // Play appropriate sound based on who won
+  if (winner === "player") {
+    playVictorySound();
+  } else {
+    playLoseSound();
   }
+
+  // Cleanup all audio-related timers
+  if (window._bgmFadeOutInterval) {
+    clearInterval(window._bgmFadeOutInterval);
+  }
+  
+  // Create a consistent way to handle BGM stopping
+  const stopBgm = () => {
+    if (bgmRef.current) {
+      bgmRef.current.pause();
+      bgmRef.current.currentTime = 0;
+      bgmRef.current.volume = 0.5; // Reset volume for next time
+      setBgmPlaying(false);
+    }
+  };
+  
+  // Stop BGM immediately
+  stopBgm();
+
+  // Cleanup animations
+  cancelAnimationFrame(rafId.current);
+  clearTimeout(comboTimer.current);
+
+  // Since we only need 1 round, the match is always done after one round
+  setTimeout(() => {
+    // Double-check BGM is fully stopped before transitioning
+    stopBgm();
+    
+    // Call onGameOver with the result
+    onGameOver({ victory: winner === "player" });
+  }, 3000);
+}
 
   function playerAttack() {
     if (!isMatchStarted || gameOver || playerMode === "attack") return;
@@ -202,6 +325,10 @@ const renderCachedImage = (src, alt, className = '') => {
 
     setHitPos({ x: 60 + Math.random() * 20, y: 30 + Math.random() * 40 });
     setShowHit(true);
+     // Play the growl sound when attacking
+  playGrowlSound();
+        playHitSound(); // Play sound when hit shows
+
     setTimeout(() => setShowHit(false), 300);
     setMessage(`${nextCombo} HIT COMBO! ${dmg} DMG!`);
   }
@@ -222,6 +349,10 @@ const renderCachedImage = (src, alt, className = '') => {
 
     setHitPos({ x: 20 + Math.random() * 20, y: 30 + Math.random() * 40 });
     setShowHit(true);
+     // Play the growl sound when attacking
+        playGrowlSound();
+        playHitSound(); // Play sound when hit shows
+
     setTimeout(() => setShowHit(false), 300);
     setMessage(`OPPONENT HITS YOU! ${dmg} DMG!`);
     setCombo(0);
@@ -233,6 +364,40 @@ const renderCachedImage = (src, alt, className = '') => {
 
   return (
     <div className="gameplay-container">
+      {/* Add the audio element at the top level of your return */}
+      <audio 
+        ref={hitSoundRef} 
+        src="/assets/sounds/hit-sound-1.mp3"
+        preload="auto"
+      />
+      <audio 
+        ref={bgmRef} 
+        src="/assets/sounds/bgm-chinese.mp3"
+        preload="auto"
+      />
+      <audio 
+      ref={countdownSoundRef}
+      src="/assets/sounds/countdown.mp3"
+      preload="auto"
+    />
+    {/* Add the new growl sound */}
+    <audio 
+      ref={growlSoundRef}
+      src="/assets/sounds/growl.mp3"
+      preload="auto"
+    />
+    {/* Add the victory sound */}
+    <audio 
+      ref={victorySoundRef}
+      src="/assets/sounds/victory.mp3"
+      preload="auto"
+    />
+    {/* Add the lose sound */}
+    <audio 
+      ref={loseSoundRef}
+      src="/assets/sounds/lose.mp3"
+      preload="auto"
+    />
       {/* countdown */}
       {countdown !== null && (
         <div className="countdown-overlay">
