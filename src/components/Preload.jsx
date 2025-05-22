@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/preloader.css';
+import assetCache from '../utils/AssetCache';
 
 const Preloader = ({ onLoadComplete }) => {
   const [progress, setProgress] = useState(0);
@@ -66,7 +67,11 @@ const Preloader = ({ onLoadComplete }) => {
     assetsToPreload.forEach(assetUrl => {
       const img = new Image();
       img.src = assetUrl;
-      img.onload = updateProgress;
+      img.onload = () => {
+        // Store the loaded image in cache using path as key
+        assetCache.addImage(assetUrl, img);
+        updateProgress();
+      };
       img.onerror = updateProgress; // Count errors as loaded to prevent blocking
     });
   }, [onLoadComplete]);
