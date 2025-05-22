@@ -59,8 +59,72 @@ export default function GameplayScene({ character, onGameOver }) {
   const [hitPos, setHitPos] = useState({ x: 50, y: 40 });
   const [buttonPressed, setButtonPressed] = useState(false);
 
+// audio sfx
+const countdownSoundRef = useRef(null);
+const hitSoundRef = useRef(null);
+const bgmRef = useRef(null);
+  const [bgmPlaying, setBgmPlaying] = useState(false);
+
+// Add these functions to play sounds
+const playCountdownSound = () => {
+  if (countdownSoundRef.current) {
+    countdownSoundRef.current.currentTime = 0;
+    countdownSoundRef.current.play()
+      .catch(err => console.error("Error playing countdown sound:", err));
+  }
+};
+
+const playHitSound = () => {
+    if (hitSoundRef.current) {
+      hitSoundRef.current.currentTime = 0; // Reset the audio to start
+      hitSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
+    }
+  };
+
+  // Function to handle background music
+  const toggleBgm = () => {
+    if (bgmRef.current) {
+      if (bgmPlaying) {
+        bgmRef.current.pause();
+      } else {
+        bgmRef.current.play().catch(err => console.error("Error playing BGM:", err));
+      }
+      setBgmPlaying(!bgmPlaying);
+    }
+  };
+
   const rafId = useRef(null);
   const comboTimer = useRef(null);
+
+useEffect(() => {
+    if (bgmRef.current && !bgmPlaying) {
+      bgmRef.current.volume = 0.5; // Set volume to 50%
+      bgmRef.current.loop = true; // Loop the BGM
+      bgmRef.current.play()
+        .then(() => setBgmPlaying(true))
+        .catch(err => console.error("Error auto-playing BGM:", err));
+    }
+  }, [isMatchStarted, bgmPlaying]);
+
+  // Stop BGM when game is over
+  useEffect(() => {
+    if (gameOver && bgmRef.current && bgmPlaying) {
+      // Fade out the BGM over 2 seconds
+      const fadeOut = setInterval(() => {
+        if (bgmRef.current.volume > 0.05) {
+          bgmRef.current.volume -= 0.05;
+        } else {
+          bgmRef.current.pause();
+          bgmRef.current.currentTime = 0;
+          bgmRef.current.volume = 0.5; // Reset volume for next time
+          setBgmPlaying(false);
+          clearInterval(fadeOut);
+        }
+      }, 100);
+      
+      return () => clearInterval(fadeOut);
+    }
+  }, [gameOver, bgmPlaying]);
 
   useEffect(() => {
     let lastTime = 0;
@@ -118,6 +182,11 @@ export default function GameplayScene({ character, onGameOver }) {
   useEffect(() => {
   if (countdown === null) return;
   
+if (countdown === 3) {
+    // Play sound only at the first count (3)
+    playCountdownSound();
+  }
+
   if (countdown > 0) {
     const id = setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => clearTimeout(id);
@@ -126,7 +195,6 @@ export default function GameplayScene({ character, onGameOver }) {
   // When countdown hits 0
   setMessage("FIGHT!");
   setIsMatchStarted(true); // Enable gameplay immediately
-  
   // Just clear the countdown message after 1 second but don't delay gameplay
   const id = setTimeout(() => {
     setCountdown(null);
@@ -184,6 +252,8 @@ export default function GameplayScene({ character, onGameOver }) {
 
     setHitPos({ x: 60 + Math.random() * 20, y: 30 + Math.random() * 40 });
     setShowHit(true);
+        playHitSound(); // Play sound when hit shows
+
     setTimeout(() => setShowHit(false), 300);
     setMessage(`${nextCombo} HIT COMBO! ${dmg} DMG!`);
   }
@@ -204,6 +274,8 @@ export default function GameplayScene({ character, onGameOver }) {
 
     setHitPos({ x: 20 + Math.random() * 20, y: 30 + Math.random() * 40 });
     setShowHit(true);
+        playHitSound(); // Play sound when hit shows
+
     setTimeout(() => setShowHit(false), 300);
     setMessage(`OPPONENT HITS YOU! ${dmg} DMG!`);
     setCombo(0);
@@ -215,6 +287,22 @@ export default function GameplayScene({ character, onGameOver }) {
 
   return (
     <div className="gameplay-container">
+      {/* Add the audio element at the top level of your return */}
+      <audio 
+        ref={hitSoundRef} 
+        src="/assets/sounds/hit-sound-1.mp3"
+        preload="auto"
+      />
+      <audio 
+        ref={bgmRef} 
+        src="/assets/sounds/bgm-chinese.mp3"
+        preload="auto"
+      />
+      <audio 
+      ref={countdownSoundRef}
+      src="/assets/sounds/countdown.mp3"
+      preload="auto"
+    />
       {/* countdown */}
       {countdown !== null && (
         <div className="countdown-overlay">
